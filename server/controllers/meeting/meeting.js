@@ -27,13 +27,11 @@ const index = async (req, res) => {
 
     const result = allData.filter(item => item.createBy !== null);
 
-    result.forEach(data => {
-        const fullName = data.createBy.firstName + data.createBy.lastName
-    data.creatByName = fullName
-})
+   const processedResults = addCreatedByName(result);
+
 
     try {
-        res.send(result)
+        res.send(processedResults);
     } catch (error) {
         res.send(error)
     }
@@ -43,9 +41,16 @@ const index = async (req, res) => {
 
 const view = async (req, res) => {
     try {
-        let response = await MeetingHistory.findOne({ _id: req.params.id })
+        let response = await MeetingHistory.findOne({ _id: req.params.id }).populate({ path: 'createBy', match: { deleted: false } })
         if (!response) return res.status(404).json({ message: "no Data Found." })
-            res.send(response)
+
+            createdByName = response.createBy.firstName + " " + response.createBy.lastName;
+
+            if(createdByName) {
+                response.createdByName = createdByName
+            }
+
+            res.send(response);
         } catch (error) {
             res.send(error)
         }
@@ -69,5 +74,18 @@ const deleteMany = async (req, res) => {
         res.status(404).json({ message: "error", err })
     }
 }
+
+const addCreatedByName = (dataArr) => {
+  const processedResults = [];
+
+  dataArr.forEach((data) => {
+    data.createdByName = data.createBy.firstName + " " + data.createBy.lastName;
+    if(data.createdByName) {
+        processedResults.push(data);
+    }
+
+  });
+  return processedResults;
+};
 
 module.exports = { add, index, view, deleteData, deleteMany }
