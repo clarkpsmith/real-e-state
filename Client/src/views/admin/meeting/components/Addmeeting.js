@@ -10,7 +10,7 @@ import { LiaMousePointerSolid } from 'react-icons/lia';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { MeetingSchema } from 'schema';
-import { getApi, postApi } from 'services/api';
+import { postApi } from 'services/api';
 
 const AddMeeting = (props) => {
     const { onClose, isOpen, setAction, from, fetchData, view } = props
@@ -21,7 +21,6 @@ const AddMeeting = (props) => {
     const [leadModelOpen, setLeadModel] = useState(false);
     const todayTime = new Date().toISOString().split('.')[0];
     const leadData = useSelector((state) => state?.leadData?.data);
-
 
     const user = JSON.parse(localStorage.getItem('user'))
     
@@ -55,25 +54,21 @@ const AddMeeting = (props) => {
     const { errors, touched, values, handleBlur, handleChange, handleSubmit, setFieldValue } = formik
 
     const AddData = async () => {
-        try {
-          setIsLoding(true);
-          let response = await postApi("api/meeting/add", values);
-          if (response.status === 200) {
-            toast.success(`Meeting ${values.agenda} added successfully`);
-            formik.resetForm();
-            onClose();
-          }
-        } catch (e) {
-          console.error(e);
-        } finally {
-          setIsLoding(false);
+      try {
+        setIsLoding(true);
+        let response = await postApi("api/meeting/add", values);
+        if (response.status === 200) {
+          toast.success(`Meeting ${values.agenda} added successfully`);
+          formik.resetForm();
+          setAction((pre) => !pre)
+          onClose();
         }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsLoding(false);
+      }
     };
-
-    const fetchAllData = async () => {
-        
-    }
-
     useEffect(() => {
 
     }, [props.id, values.related])
