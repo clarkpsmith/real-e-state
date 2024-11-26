@@ -10,5 +10,5 @@
 
 - Implement Restful API of "Meeting" in both of server and Client
 
-    mplemented, view, add, delete, deleteMany, meetings 
+    implemented, view, add, delete, deleteMany, meetings 
 
