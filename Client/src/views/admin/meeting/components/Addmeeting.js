@@ -24,32 +24,50 @@ const AddMeeting = (props) => {
 
 
     const user = JSON.parse(localStorage.getItem('user'))
-
-    const contactList = useSelector((state) => state?.contactData?.data)
-
+    
+    const contactList = useSelector((state) => state?.contactData?.data);
 
     const initialValues = {
-        agenda: '',
-        attendes: props.leadContect === 'contactView' && props.id ? [props.id] : [],
-        attendesLead: props.leadContect === 'leadView' && props.id ? [props.id] : [],
-        location: '',
-        related: props.leadContect === 'contactView' ? 'Contact' : props.leadContect === 'leadView' ? 'Lead' : 'None',
-        dateTime: '',
-        notes: '',
-        createBy: user?._id,
-    }
+      agenda: "",
+      attendes:
+        props.leadContect === "contactView" && props.id ? [props.id] : [],
+      attendesLead:
+        props.leadContect === "leadView" && props.id ? [props.id] : [],
+      location: "",
+      related:
+        props.leadContect === "contactView"
+          ? "Contact"
+          : props.leadContect === "leadView"
+          ? "Lead"
+          : "None",
+      dateTime: "",
+      notes: "",
+      createBy: user?._id,
+    };
 
     const formik = useFormik({
-        initialValues: initialValues,
-        validationSchema: MeetingSchema,
-        onSubmit: (values, { resetForm }) => {
-            
-        },
+      initialValues: initialValues,
+      validationSchema: MeetingSchema,
+      onSubmit: (values, { resetForm }) => {
+        AddData();
+      },
     });
     const { errors, touched, values, handleBlur, handleChange, handleSubmit, setFieldValue } = formik
 
     const AddData = async () => {
-
+        try {
+          setIsLoding(true);
+          let response = await postApi("api/meeting/add", values);
+          if (response.status === 200) {
+            toast.success(`Meeting ${values.agenda} added successfully`);
+            formik.resetForm();
+            onClose();
+          }
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setIsLoding(false);
+        }
     };
 
     const fetchAllData = async () => {
