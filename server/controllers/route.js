@@ -48,6 +48,7 @@ router.use("/images", imagesRoute);
 router.use('/role-access', roleAccessRoute);
 router.use('/route', route);
 
+router.use("/meeting", meetingRoute)
 router.use('/modules', moduleActiveDeactiveRoute);
 router.use("/custom-field", customFieldRoute);
 router.use("/validation", validationRoute);
